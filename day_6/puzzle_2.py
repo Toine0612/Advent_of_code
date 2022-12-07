@@ -1,15 +1,25 @@
 import fileinput
 
-input = open('input.txt','r').read()
-position = 14
+input = open('input.txt','r').read().splitlines()
+crates = [[] for y in range(9)]
 
-for i in input:
-    string = input[position - 14:position]
-    set_string = set(string)
+# Set input in double array
+for i in range(9):
+    for j in range (8):
+        if input[j][i + i * 3 + 1] != ' ':
+            crates[i].insert(0, input[j][i + i * 3 + 1])
 
-    if len(set_string) == len(string):
-        break
+for i in input[10:]:
+    amount = int(i.split(" ")[1])
+    start = int(i.split(" ")[3]) - 1
+    dest = int(i.split(" ")[5]) - 1
 
-    position += 1
+    dest_length_index = len(crates[dest])
+    for j in range(amount):
+        crates[dest].insert(dest_length_index, crates[start].pop())
+        
+anwser = ""
+for i in range(9):
+    anwser += crates[i].pop()
 
-print(position)
+print(anwser)
