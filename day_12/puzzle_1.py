@@ -5,7 +5,7 @@ NEIGHBORS = [[0, 1], [1, 0], [0, -1], [-1, 0]] # top, right, bottom, left
 map = open('input.txt','r').read().split("\n")
 rows = [[] for i in range(len(map))]
 columns = [[] for i in range(len(map[0]))]
-queue = [[20, 0, 0]] # Start position
+queue = [[0, 20, 0]] # Start position
 path = []
 
 for row in range(0, len(rows)):

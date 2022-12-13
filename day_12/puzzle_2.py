@@ -1,46 +1,39 @@
-import sys
-import math
-from copy import deepcopy
-from collections import defaultdict, deque
-infile = sys.argv[1] if len(sys.argv)>1 else '12.in'
-data = open("input.txt").read().strip()
-lines = [x for x in data.split('\n')]
+import fileinput
 
-G = []
-for line in lines:
-    G.append(line)
-R = len(G)
-C = len(G[0])
+NEIGHBORS = [[0, 1], [1, 0], [0, -1], [-1, 0]] # top, right, bottom, left
 
-E = [[0 for _ in range(C)] for _ in range(R)]
-for r in range(R):
-    for c in range(C):
-        if G[r][c]=='S':
-            E[r][c] = 1
-        elif G[r][c] == 'E':
-            E[r][c] = 26
-        else:
-            E[r][c] = ord(G[r][c])-ord('a')+1
+map = open('input.txt','r').read().split("\n")
+rows = [[] for i in range(len(map))]
+columns = [[] for i in range(len(map[0]))]
+queue = [[0, 20, 0]] # Start position
+path = []
 
-def bfs(part):
-    Q = deque()
-    for r in range(R):
-        for c in range(C):
-            if (part==1 and G[r][c]=='S') or (part==2 and E[r][c] == 1):
-                Q.append(((r,c), 0))
+for row in range(0, len(rows)):
+    for col in range(0, len(columns)):
+        rows[row].append(map[row][col])
+        if map[row][col] == "a":
+            queue.append([col, row, 0])
 
-    S = set()
-    while Q:
-        (r,c),d = Q.popleft()
-        if (r,c) in S:
+while len(queue) > 0:
+    pos = queue.pop(0)
+    item = rows[pos[1]][pos[0]]
+    item_height = ord(item) if item != "S" else ord('a')    
+
+    if item == "E":
+        print(pos[2])
+        break
+
+    for i in range(len(NEIGHBORS)):
+        neighbor_set = [pos[0] + NEIGHBORS[i][0], pos[1] + NEIGHBORS[i][1]]
+        neighbor_pos = [pos[0] + NEIGHBORS[i][0], pos[1] + NEIGHBORS[i][1], pos[2] + 1]
+        # Check if pos is out of bounds
+        if neighbor_pos[1] >= len(rows) or neighbor_pos[1] < 0 or neighbor_pos[0] >= len(rows[0]) or neighbor_pos[0] < 0:
             continue
-        S.add((r,c))
-        if G[r][c]=='E':
-            return d
-        for dr,dc in [(-1,0),(0,1),(1,0),(0,-1)]:
-            rr = r+dr
-            cc = c+dc
-            if 0<=rr<R and 0<=cc<C and E[rr][cc]<=1+E[r][c]:
-                Q.append(((rr,cc),d+1))
-print(bfs(1))
-print(bfs(2))
+        neighbor = rows[neighbor_pos[1]][neighbor_pos[0]]
+        neighbor_height = ord(neighbor) if neighbor != "E" else ord('z')
+
+        height_diff = neighbor_height - item_height
+
+        if neighbor_set not in path and height_diff <= 1:
+            queue.append(neighbor_pos)
+            path.append(neighbor_set)
