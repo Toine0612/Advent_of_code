@@ -29,5 +29,4 @@ for i, p in enumerate(pairs):
         elif compare(l, [[6]]) < 0:
             i6 += 1
 
-
 print(i2 * i6)
